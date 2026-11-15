@@ -1,0 +1,52 @@
+/* Fonts bundled with the app (files live in public/fonts).
+   To add another: drop the file in public/fonts, add a rule here, then add
+   an entry to FONTS in constants.js. */
+
+@font-face {
+  font-family: 'Runethia';
+  src: url('/fonts/Runethia.otf') format('opentype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Runiga';
+  src: url('/fonts/Runiga.otf') format('opentype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Autography';
+  src: url('/fonts/Autography.otf') format('opentype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Brother Signature';
+  src: url('/fonts/Brother%20Signature.otf') format('opentype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Always in the Star';
+  src: url('/fonts/Always%20in%20the%20Star.ttf') format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rustic Roadway';
+  src: url('/fonts/RusticRoadway.otf') format('opentype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Southern Beach';
+  src: url('/fonts/Southern%20Beach.otf') format('opentype');
+  font-display: swap;
+}
+
+/* The file name really does have a space before ".otf". */
+@font-face {
+  font-family: 'Stylish Handwriting Script';
+  src: url('/fonts/Stylish%20Handwriting%20Script%20.otf') format('opentype');
+  font-display: swap;
+}
