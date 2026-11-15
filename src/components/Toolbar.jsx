@@ -45,7 +45,19 @@ function Swatches({ label, options, value, colorOf, onChange }) {
   );
 }
 
-export default function Toolbar({ style, collapsed, onToggle, onStyle, onList }) {
+export default function Toolbar({
+  style,
+  collapsed,
+  onToggle,
+  onStyle,
+  onList,
+  onAddPostit,
+  drawing,
+  hasDrawing,
+  onToggleDraw,
+  onUndoStroke,
+  onClearDrawing,
+}) {
   if (collapsed) {
     return (
       <button className="toolbar toolbar-collapsed" onClick={onToggle} aria-expanded="false" aria-label="Show writing tools">
@@ -99,6 +111,35 @@ export default function Toolbar({ style, collapsed, onToggle, onStyle, onList })
             </button>
           ))}
         </div>
+      </div>
+      <div className="tb-group">
+        <span className="tb-label">Draw</span>
+        <div className="segmented" role="group" aria-label="Draw">
+          <button
+            type="button"
+            aria-pressed={drawing}
+            onClick={onToggleDraw}
+            title="Draw on the page with your mouse or finger, using the current pen and ink"
+          >
+            {drawing ? 'Drawing' : 'Draw'}
+          </button>
+          {(drawing || hasDrawing) && (
+            <>
+              <button type="button" onClick={onUndoStroke} disabled={!hasDrawing} title="Remove the last stroke">
+                Undo
+              </button>
+              <button type="button" onClick={onClearDrawing} disabled={!hasDrawing} title="Erase the whole drawing">
+                Clear
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+      <div className="tb-group">
+        <span className="tb-label">Post-it</span>
+        <button type="button" className="postit-add" onClick={onAddPostit} title="Stick a post-it on this page">
+          <i aria-hidden="true" /> Add
+        </button>
       </div>
       <Segmented label="Paper" options={PAPER_TYPES} value={style.paper} onChange={(paper) => onStyle({ paper })} />
       <Swatches

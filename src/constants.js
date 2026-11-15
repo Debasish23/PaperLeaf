@@ -50,6 +50,14 @@ export const FONTS = [
   { id: 'stylish', label: 'Stylish Handwriting Script', family: '"Stylish Handwriting Script", cursive', size: 26 },
 ];
 
+export const POSTIT_COLORS = [
+  { id: 'yellow', label: 'Yellow', bg: '#fff27a' },
+  { id: 'pink', label: 'Pink', bg: '#ffb7cb' },
+  { id: 'green', label: 'Green', bg: '#c9f0a6' },
+  { id: 'blue', label: 'Blue', bg: '#b6e2ff' },
+  { id: 'orange', label: 'Orange', bg: '#ffd08a' },
+];
+
 export const DEFAULT_STYLE = {
   paper: 'ruled',
   paperColor: 'cream',

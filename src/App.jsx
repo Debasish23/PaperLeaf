@@ -25,6 +25,7 @@ export default function App() {
     () => !noteIdFromHash() && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
   );
   const hideSplash = useCallback(() => setShowSplash(false), []);
+  const [freshId, setFreshId] = useState(null);
 
   const notesRef = useRef(notes);
   const openIdRef = useRef(openId);
@@ -96,7 +97,12 @@ export default function App() {
         commit(
           (list) => {
             const leaving = list.find((n) => n.id === prevId);
-            const isBlank = leaving && !leaving.title.trim() && !leaving.content.trim();
+            const isBlank =
+              leaving &&
+              !leaving.title.trim() &&
+              !leaving.content.trim() &&
+              !leaving.postits?.length &&
+              !leaving.strokes?.length;
             return isBlank ? list.filter((n) => n.id !== prevId) : list;
           },
           { immediate: true }
@@ -130,6 +136,7 @@ export default function App() {
   const handleNew = () => {
     const note = createNote(prefs.lastStyle);
     commit((list) => [note, ...list], { immediate: true });
+    setFreshId(note.id); // the editor unrolls a brand-new page
     openNote(note.id);
   };
 
@@ -177,6 +184,7 @@ export default function App() {
       <Editor
         key={openNoteData.id}
         note={openNoteData}
+        isNew={openNoteData.id === freshId}
         saveState={saveState}
         toolbarCollapsed={prefs.toolbarCollapsed}
         onToggleToolbar={() => updatePrefs({ toolbarCollapsed: !prefs.toolbarCollapsed })}

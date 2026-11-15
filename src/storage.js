@@ -1,4 +1,4 @@
-import { DEFAULT_STYLE, FONTS, INKS, PAPER_COLORS, PAPER_TYPES, PENS } from './constants';
+import { DEFAULT_STYLE, FONTS, INKS, PAPER_COLORS, PAPER_TYPES, PENS, POSTIT_COLORS } from './constants';
 
 export const NOTES_KEY = 'paperleaf.notes.v1';
 const PREFS_KEY = 'paperleaf.prefs.v1';
@@ -16,6 +16,33 @@ export function normalizeStyle(style = {}) {
   };
 }
 
+/** Post-its stuck on a note's page. x is a fraction of the page width, y is px from the top. */
+function normalizePostits(list) {
+  if (!Array.isArray(list)) return [];
+  return list
+    .filter((p) => p && typeof p.id === 'string')
+    .map((p) => ({
+      id: p.id,
+      text: typeof p.text === 'string' ? p.text : '',
+      color: has(POSTIT_COLORS, p.color) ? p.color : POSTIT_COLORS[0].id,
+      x: Math.min(1, Math.max(0, Number(p.x) || 0)),
+      y: Math.max(0, Number(p.y) || 0),
+      rot: Math.min(6, Math.max(-6, Number(p.rot) || 0)),
+    }));
+}
+
+/** Freehand strokes: flat [x, y, x, y…] lists in units of the page width. */
+function normalizeStrokes(list) {
+  if (!Array.isArray(list)) return [];
+  return list
+    .filter((s) => s && Array.isArray(s.pts) && s.pts.length >= 2 && s.pts.every(Number.isFinite))
+    .map((s) => ({
+      pen: has(PENS, s.pen) ? s.pen : DEFAULT_STYLE.pen,
+      ink: has(INKS, s.ink) ? s.ink : DEFAULT_STYLE.ink,
+      pts: s.pts,
+    }));
+}
+
 function normalizeNote(note) {
   if (!note || typeof note !== 'object' || typeof note.id !== 'string') return null;
   const now = Date.now();
@@ -26,6 +53,8 @@ function normalizeNote(note) {
     createdAt: Number(note.createdAt) || now,
     updatedAt: Number(note.updatedAt) || Number(note.createdAt) || now,
     style: normalizeStyle(note.style),
+    postits: normalizePostits(note.postits),
+    strokes: normalizeStrokes(note.strokes),
   };
 }
 
@@ -36,7 +65,7 @@ export function newId() {
 
 export function createNote(style) {
   const now = Date.now();
-  return { id: newId(), title: '', content: '', createdAt: now, updatedAt: now, style: normalizeStyle(style) };
+  return { id: newId(), title: '', content: '', createdAt: now, updatedAt: now, style: normalizeStyle(style), postits: [], strokes: [] };
 }
 
 function welcomeNote() {

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { PAPER_COLORS, byId, styleVars } from '../constants';
+import { PAPER_COLORS, POSTIT_COLORS, byId, styleVars } from '../constants';
 import { formatDate, formatEdited } from '../utils';
 import Dialog from './Dialog.jsx';
 import { PencilIcon, PlusIcon, SearchIcon, TrashIcon } from './Icons.jsx';
@@ -23,6 +23,14 @@ function NoteCard({ note, onOpen, onRename, onDelete }) {
       <div className="card-foot">
         <span title={`Created ${formatDate(note.createdAt)}`}>Created {formatDate(note.createdAt)}</span>
         <span>Edited {formatEdited(note.updatedAt)}</span>
+        {note.postits?.length > 0 && (
+          <span className="card-postits">
+            {note.postits.slice(0, 5).map((p) => (
+              <i key={p.id} style={{ background: byId(POSTIT_COLORS, p.color).bg }} />
+            ))}
+            {note.postits.length} {note.postits.length === 1 ? 'post-it' : 'post-its'}
+          </span>
+        )}
       </div>
       <div className="card-actions">
         <button className="icon-btn" onClick={onRename} aria-label={`Rename ${title}`} title="Rename">

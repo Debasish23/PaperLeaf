@@ -33,6 +33,13 @@ files, so it deploys to Vercel's free tier as-is.
   arrow (→) and checkbox (☐) lists from the toolbar. Enter starts the next
   item, Enter on an empty item ends the list, pressing the same button again
   removes the markers, and clicking a checkbox ticks it.
+- **Post-its** — stick coloured post-its on any page from the toolbar. Drag
+  them by the top strip, type on them, cycle through five colours, or remove
+  them. They are saved with the note and counted on its dashboard card.
+- **Drawing** — switch on Draw in the toolbar and sketch on the page with a
+  mouse, finger or stylus, using the current pen and ink. Undo removes the last
+  stroke; Clear erases the drawing. Drawings are saved with the note.
+- **New-note animation** — a new page unrolls like a scroll of paper.
 - **Opening animation** — a fountain pen writes "Paperleaf" over a frosted view
   of your notes, then fades (about 2.7 seconds). Click, tap or press any key to
   skip. Both animations are turned off for people whose system is set to

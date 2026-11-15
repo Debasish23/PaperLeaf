@@ -1,9 +1,39 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect x="10" y="6" width="44" height="52" rx="4" fill="#f6eeda" stroke="#8a7a5c" stroke-width="2"/>
-  <line x1="22" y1="6" x2="22" y2="58" stroke="#e0566a" stroke-width="2"/>
-  <g stroke="#7f9cc4" stroke-width="2">
-    <line x1="10" y1="22" x2="54" y2="22"/>
-    <line x1="10" y1="32" x2="54" y2="32"/>
-    <line x1="10" y1="42" x2="54" y2="42"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Paperleaf: a fountain pen writing on a sheet of ruled paper. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3d5eac"/>
+      <stop offset="1" stop-color="#1b2c68"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fffaf0"/>
+      <stop offset="1" stop-color="#f0e4c8"/>
+    </linearGradient>
+    <linearGradient id="barrel" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f08a5d"/>
+      <stop offset="1" stop-color="#d9534f"/>
+    </linearGradient>
+  </defs>
+  <rect id="tile" width="512" height="512" rx="112" fill="url(#bg)"/>
+  <g id="mark" transform="translate(0 0)">
+    <!-- the sheet -->
+    <g transform="rotate(-7 220 262)">
+      <rect x="92" y="78" width="256" height="368" rx="20" fill="#0f1c4d" opacity="0.28" transform="translate(8 12)"/>
+      <rect x="92" y="78" width="256" height="368" rx="20" fill="url(#paper)"/>
+      <path d="M92 168h256M92 226h256M92 284h256M92 342h256M92 400h256" stroke="#9fb6d8" stroke-width="7"/>
+      <path d="M140 78v368" stroke="#e0566a" stroke-width="7"/>
+    </g>
+    <!-- what the pen has written so far -->
+    <path d="M150 318c14-46 32-48 38-8s22 34 34-2 30-38 36-4 10 24 22 14" fill="none" stroke="#2b448c" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- the pen: tip on the paper, leaning to the upper right -->
+    <g transform="translate(288 332) rotate(36) scale(2.75) translate(-12 -120)">
+      <rect x="6" y="2" width="12" height="70" rx="5" fill="url(#barrel)"/>
+      <rect x="8.4" y="6" width="2.4" height="60" rx="1.2" fill="#fff" opacity="0.35"/>
+      <rect x="5.4" y="70" width="13.2" height="5" rx="1.2" fill="#f2cf6b"/>
+      <path d="M7.2 75h9.6l-1.4 21H8.6z" fill="#1c1f2b"/>
+      <path d="M8.6 96h6.8L12 120z" fill="#f2cf6b"/>
+      <path d="M12 104v15" stroke="#8a6d1f" stroke-width="0.8"/>
+      <circle cx="12" cy="103" r="1.1" fill="#8a6d1f"/>
+    </g>
   </g>
 </svg>
