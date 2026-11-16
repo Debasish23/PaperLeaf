@@ -58,6 +58,11 @@ function normalizeNote(note) {
   };
 }
 
+/** Validate a list of notes from outside the app (a file or a backup). */
+export function normalizeNotes(list) {
+  return Array.isArray(list) ? list.map(normalizeNote).filter(Boolean) : [];
+}
+
 export function newId() {
   if (globalThis.crypto?.randomUUID) return crypto.randomUUID();
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
@@ -105,6 +110,30 @@ export function saveNotes(notes) {
     return true;
   } catch {
     return false;
+  }
+}
+
+// Ids of notes deleted on this device. When the notes file is read back in,
+// these stay deleted even if the file still lists them (for example a note
+// deleted while the browser wasn't allowed to write to the file).
+const DELETED_KEY = 'paperleaf.deleted.v1';
+const DELETED_LIMIT = 500;
+
+export function loadDeletedIds() {
+  try {
+    const list = JSON.parse(localStorage.getItem(DELETED_KEY) || '[]');
+    return new Set(Array.isArray(list) ? list : []);
+  } catch {
+    return new Set();
+  }
+}
+
+export function rememberDeleted(id) {
+  try {
+    const ids = [...loadDeletedIds(), id].slice(-DELETED_LIMIT);
+    localStorage.setItem(DELETED_KEY, JSON.stringify(ids));
+  } catch {
+    /* worst case a deleted note comes back from the file */
   }
 }
 

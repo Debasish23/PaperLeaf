@@ -128,10 +128,27 @@ src/
 - **Line spacing** — change `LINE_HEIGHT` in `src/constants.js` and `--lh` in
   `src/styles.css` together.
 
+## Where notes are stored
+
+- **In the browser (always).** Notes and preferences are kept in the browser's
+  `localStorage` for the site. This is instant and survives refreshes.
+- **In a file on the device (optional).** On the dashboard, open **Storage** and
+  choose **Create notes file…**. Every change is then also written to
+  `paperleaf-notes.json` wherever you saved it, so the notes survive clearing
+  the browser and can be copied or backed up like any file. This needs Chrome,
+  Edge or another Chromium browser on a computer. The browser asks for
+  permission again each time you come back; the dashboard shows an
+  **Allow saving** button when it does.
+- **Backup (every browser).** **Export backup** downloads all notes as a file;
+  **Import backup…** brings notes in from one. Importing merges and never
+  deletes: where both have the same note, the more recently edited one wins.
+
 ## Good to know
 
-- Notes live in this browser on this device only. Clearing site data, or using
-  a different browser or device, means the notes are not there. There is no
-  sync or export yet.
+- Without a notes file, notes live in this browser on this device only:
+  clearing site data, or using another browser or device, means they are not
+  there. There is no automatic sync between devices.
+- The notes file and backups are plain, unencrypted JSON.
 - `localStorage` holds roughly 5 MB per site — enough for thousands of text
-  notes. If it ever fills up, the editor shows "Couldn't save".
+  notes, though drawings use it fastest. If it fills up, the editor shows
+  "Couldn't save".

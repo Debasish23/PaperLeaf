@@ -2,7 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Dashboard from './components/Dashboard.jsx';
 import Editor from './components/Editor.jsx';
 import Splash from './components/Splash.jsx';
-import { NOTES_KEY, createNote, loadNotes, loadPrefs, saveNotes, savePrefs } from './storage';
+import { NOTES_KEY, createNote, loadNotes, loadPrefs, rememberDeleted, saveNotes, savePrefs } from './storage';
+import useDeviceFile from './useDeviceFile';
 
 const SAVE_DELAY_MS = 400;
 
@@ -32,13 +33,17 @@ export default function App() {
   const dirtyRef = useRef(false);
   const timerRef = useRef(null);
 
-  /** Write pending changes to localStorage right now. */
+  // Set once the device-file hook exists; flush() calls it after each save.
+  const writeFileRef = useRef(null);
+
+  /** Write pending changes to localStorage (and the notes file) right now. */
   const flush = useCallback(() => {
     clearTimeout(timerRef.current);
     if (!dirtyRef.current) return;
     const ok = saveNotes(notesRef.current);
     dirtyRef.current = !ok;
     setSaveState(ok ? 'saved' : 'error');
+    writeFileRef.current?.();
   }, []);
 
   /** Apply a change to the notes list and schedule a silent save. */
@@ -59,6 +64,19 @@ export default function App() {
     },
     [flush]
   );
+
+  // --- Notes file on the device (optional) ---
+  const getNotes = useCallback(() => notesRef.current, []);
+  /** Replace the whole list, e.g. after reading the notes file or a backup. */
+  const adoptNotes = useCallback(
+    (list) => {
+      const unchanged = JSON.stringify(list) === JSON.stringify(notesRef.current);
+      if (!unchanged) commit(() => list, { immediate: true });
+    },
+    [commit]
+  );
+  const file = useDeviceFile(getNotes, adoptNotes);
+  writeFileRef.current = file.writeNow;
 
   // Never lose the last few keystrokes: save when the tab is hidden or closed.
   useEffect(() => {
@@ -103,6 +121,7 @@ export default function App() {
               !leaving.content.trim() &&
               !leaving.postits?.length &&
               !leaving.strokes?.length;
+            if (isBlank) rememberDeleted(prevId);
             return isBlank ? list.filter((n) => n.id !== prevId) : list;
           },
           { immediate: true }
@@ -159,6 +178,7 @@ export default function App() {
   };
 
   const handleDelete = (id) => {
+    rememberDeleted(id);
     commit((list) => list.filter((n) => n.id !== id), { immediate: true });
   };
 
@@ -169,11 +189,23 @@ export default function App() {
     if (openId && !openNoteData) window.location.hash = '#/';
   }, [openId, openNoteData]);
 
+  const dashboard = (
+    <Dashboard
+      notes={notes}
+      file={file}
+      onImport={adoptNotes}
+      onNew={handleNew}
+      onOpen={openNote}
+      onRename={handleRename}
+      onDelete={handleDelete}
+    />
+  );
+
   if (showSplash) {
     // The dashboard sits underneath so the splash can zoom straight into it.
     return (
       <>
-        <Dashboard notes={notes} onNew={handleNew} onOpen={openNote} onRename={handleRename} onDelete={handleDelete} />
+        {dashboard}
         <Splash onDone={hideSplash} />
       </>
     );
@@ -194,13 +226,5 @@ export default function App() {
     );
   }
 
-  return (
-    <Dashboard
-      notes={notes}
-      onNew={handleNew}
-      onOpen={openNote}
-      onRename={handleRename}
-      onDelete={handleDelete}
-    />
-  );
+  return dashboard;
 }

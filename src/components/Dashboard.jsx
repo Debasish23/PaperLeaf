@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { PAPER_COLORS, POSTIT_COLORS, byId, styleVars } from '../constants';
 import { formatDate, formatEdited } from '../utils';
 import Dialog from './Dialog.jsx';
+import StoragePanel from './StoragePanel.jsx';
 import { PencilIcon, PlusIcon, SearchIcon, TrashIcon } from './Icons.jsx';
 
 function NoteCard({ note, onOpen, onRename, onDelete }) {
@@ -44,10 +45,12 @@ function NoteCard({ note, onOpen, onRename, onDelete }) {
   );
 }
 
-export default function Dashboard({ notes, onNew, onOpen, onRename, onDelete }) {
+export default function Dashboard({ notes, file, onImport, onNew, onOpen, onRename, onDelete }) {
   const [query, setQuery] = useState('');
   const [renaming, setRenaming] = useState(null); // { id, value }
   const [deleting, setDeleting] = useState(null); // note
+  const [storageOpen, setStorageOpen] = useState(false);
+  const onFile = file.status === 'connected';
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -64,7 +67,9 @@ export default function Dashboard({ notes, onNew, onOpen, onRename, onDelete }) 
           <p>
             {notes.length === 0
               ? 'Your notebook is empty'
-              : `${notes.length} ${notes.length === 1 ? 'note' : 'notes'} · saved on this device`}
+              : `${notes.length} ${notes.length === 1 ? 'note' : 'notes'} · ${
+                  onFile ? `saved to ${file.fileName}` : 'saved in this browser'
+                }`}
           </p>
         </div>
         <div className="dash-tools">
@@ -80,11 +85,31 @@ export default function Dashboard({ notes, onNew, onOpen, onRename, onDelete }) 
               />
             </label>
           )}
+          <button
+            className={`btn btn-ghost storage-btn is-${file.status}`}
+            onClick={() => setStorageOpen(true)}
+            title="Where your notes are saved"
+          >
+            <i aria-hidden="true" /> Storage
+          </button>
           <button className="btn btn-primary btn-new" onClick={onNew}>
             <PlusIcon /> New Note
           </button>
         </div>
       </header>
+
+      {(file.status === 'locked' || file.status === 'error') && (
+        <div className="storage-banner" role="status">
+          <span>
+            {file.status === 'locked'
+              ? `Changes aren’t being written to ${file.fileName} yet — the browser needs your permission again.`
+              : `Couldn’t write to ${file.fileName || 'your notes file'}. Your notes are still safe in the browser.`}
+          </span>
+          <button className="btn btn-primary" onClick={file.status === 'locked' ? file.unlock : () => setStorageOpen(true)}>
+            {file.status === 'locked' ? 'Allow saving' : 'Fix'}
+          </button>
+        </div>
+      )}
 
       {notes.length === 0 ? (
         <div className="empty">
@@ -113,6 +138,10 @@ export default function Dashboard({ notes, onNew, onOpen, onRename, onDelete }) 
             />
           ))}
         </main>
+      )}
+
+      {storageOpen && (
+        <StoragePanel notes={notes} file={file} onImport={onImport} onClose={() => setStorageOpen(false)} />
       )}
 
       {renaming && (
